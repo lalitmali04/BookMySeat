@@ -1,0 +1,25 @@
+{
+  "name": "bookmyseat",
+  "version": "1.0.0",
+  "description": "Production-quality Cinema & Live Event Ticket Booking System with Distributed Redis Temporary Locking, ACID PostgreSQL Row-Level Locks, and Real-Time Seat Availability.",
+  "scripts": {
+    "dev:server": "cd server && npm run dev",
+    "dev:client": "cd client && npm run dev",
+    "seed": "cd server && npm run seed",
+    "test:concurrency": "cd server && npm run test:concurrency",
+    "build:server": "cd server && npm run build",
+    "build:client": "cd client && npm run build"
+  },
+  "keywords": [
+    "ticket-booking",
+    "cinema",
+    "redis-lock",
+    "concurrency",
+    "postgresql",
+    "socket.io",
+    "react",
+    "tailwind"
+  ],
+  "author": "BookMySeat Team",
+  "license": "MIT"
+}
