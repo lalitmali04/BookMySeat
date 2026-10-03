@@ -1,38 +1,41 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Ticket, ShieldCheck, CreditCard, Sparkles, Film, Heart } from 'lucide-react';
+import { Ticket, ShieldCheck, CreditCard, Film, Clapperboard, Sparkles } from 'lucide-react';
 
 export const Footer: React.FC = () => {
   return (
-    <footer className="bg-slate-950 border-t border-slate-800/80 pt-16 pb-12 text-slate-400 text-xs">
+    <footer className="bg-[#05070d] border-t border-white/[0.08] pt-16 pb-12 text-slate-400 text-xs">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Value Highlights */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pb-12 border-b border-slate-800/60 mb-12">
-          <div className="flex items-center gap-4 p-4 rounded-2xl bg-slate-900/50 border border-slate-800">
-            <div className="w-10 h-10 rounded-xl bg-rose-500/10 flex items-center justify-center text-rose-500 shrink-0">
-              <Ticket className="w-5 h-5" />
+        
+        {/* Value Highlights Studio Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pb-12 border-b border-white/[0.06] mb-12">
+          <div className="flex items-center gap-4 p-5 rounded-2xl studio-glass border border-white/[0.06]">
+            <div className="w-11 h-11 rounded-xl bg-rose-500/15 border border-rose-500/25 flex items-center justify-center text-rose-500 shrink-0">
+              <Ticket className="w-5 h-5 -rotate-12" />
             </div>
             <div>
               <h4 className="font-bold text-white text-sm">Real-Time Seat Locking</h4>
-              <p className="text-slate-400 text-[11px] mt-0.5">Distributed Redis lock guarantees zero double-bookings.</p>
+              <p className="text-slate-400 text-[11px] mt-0.5">Distributed Redis locks prevent double booking across concurrent sessions.</p>
             </div>
           </div>
-          <div className="flex items-center gap-4 p-4 rounded-2xl bg-slate-900/50 border border-slate-800">
-            <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-400 shrink-0">
+
+          <div className="flex items-center gap-4 p-5 rounded-2xl studio-glass border border-white/[0.06]">
+            <div className="w-11 h-11 rounded-xl bg-emerald-500/15 border border-emerald-500/25 flex items-center justify-center text-emerald-400 shrink-0">
               <ShieldCheck className="w-5 h-5" />
             </div>
             <div>
-              <h4 className="font-bold text-white text-sm">100% Instant E-Tickets</h4>
-              <p className="text-slate-400 text-[11px] mt-0.5">Instant QR codes for contactless digital entry at all multiplexes.</p>
+              <h4 className="font-bold text-white text-sm">Instant Turnstile E-Tickets</h4>
+              <p className="text-slate-400 text-[11px] mt-0.5">High-contrast QR passes for contactless gate entry at all auditoriums.</p>
             </div>
           </div>
-          <div className="flex items-center gap-4 p-4 rounded-2xl bg-slate-900/50 border border-slate-800">
-            <div className="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400 shrink-0">
+
+          <div className="flex items-center gap-4 p-5 rounded-2xl studio-glass border border-white/[0.06]">
+            <div className="w-11 h-11 rounded-xl bg-amber-500/15 border border-amber-500/25 flex items-center justify-center text-amber-400 shrink-0">
               <CreditCard className="w-5 h-5" />
             </div>
             <div>
-              <h4 className="font-bold text-white text-sm">Fast & Secure Checkout</h4>
-              <p className="text-slate-400 text-[11px] mt-0.5">Idempotent transaction layer with UPI, Cards & NetBanking.</p>
+              <h4 className="font-bold text-white text-sm">Idempotent Transactions</h4>
+              <p className="text-slate-400 text-[11px] mt-0.5">Zero double-charging guarantee backed by atomic database transactions.</p>
             </div>
           </div>
         </div>
@@ -40,55 +43,55 @@ export const Footer: React.FC = () => {
         {/* Main Footer Links */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
           <div>
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-7 h-7 rounded-xl bg-gradient-to-tr from-rose-600 to-amber-500 flex items-center justify-center text-white font-bold">
-                <Ticket className="w-4 h-4" />
+            <div className="flex items-center gap-2.5 mb-4">
+              <div className="w-8 h-8 rounded-xl bg-rose-600 flex items-center justify-center text-white font-bold shadow-md shadow-rose-600/30">
+                <Clapperboard className="w-4 h-4" />
               </div>
-              <span className="text-base font-extrabold text-white">BookMySeat</span>
+              <span className="text-lg font-black text-white tracking-tight">Book<span className="text-rose-500">My</span>Seat</span>
             </div>
             <p className="text-xs text-slate-400 leading-relaxed mb-4">
-              The next-generation cinema and entertainment ticket booking engine built for speed, visual beauty, and rock-solid concurrency.
+              Premium cinema and live event ticketing engine built for studio-grade speed, visual immersion, and distributed concurrency.
             </p>
           </div>
 
           <div>
-            <h5 className="font-bold text-white text-xs uppercase tracking-wider mb-3">Cinemas & Venues</h5>
-            <ul className="space-y-2">
-              <li><span className="hover:text-rose-400 transition cursor-pointer">PVR ICON IMAX 3D</span></li>
-              <li><span className="hover:text-rose-400 transition cursor-pointer">INOX INSIGNIA Multiplex</span></li>
-              <li><span className="hover:text-rose-400 transition cursor-pointer">Cinépolis VIP Lounge</span></li>
-              <li><span className="hover:text-rose-400 transition cursor-pointer">Prasads Large Screen</span></li>
+            <h5 className="font-bold text-white text-xs uppercase tracking-wider mb-3">Cinemas & Formats</h5>
+            <ul className="space-y-2 text-slate-400">
+              <li><span className="hover:text-rose-400 transition cursor-pointer">IMAX 3D Laser Auditorium</span></li>
+              <li><span className="hover:text-rose-400 transition cursor-pointer">Dolby Atmos Prime Arena</span></li>
+              <li><span className="hover:text-rose-400 transition cursor-pointer">4DX Motion & Environment</span></li>
+              <li><span className="hover:text-rose-400 transition cursor-pointer">Director's Cut VIP Lounges</span></li>
             </ul>
           </div>
 
           <div>
             <h5 className="font-bold text-white text-xs uppercase tracking-wider mb-3">Quick Navigation</h5>
             <ul className="space-y-2">
-              <li><Link to="/" className="hover:text-rose-400 transition">Now Showing Movies</Link></li>
-              <li><Link to="/?category=event" className="hover:text-rose-400 transition">Live Concerts & Events</Link></li>
-              <li><Link to="/my-bookings" className="hover:text-rose-400 transition">Booking History</Link></li>
-              <li><Link to="/profile" className="hover:text-rose-400 transition">My Membership</Link></li>
+              <li><Link to="/" className="hover:text-rose-400 transition">Now Showing Blockbusters</Link></li>
+              <li><Link to="/?category=event" className="hover:text-rose-400 transition">Live Concerts & Stadium Shows</Link></li>
+              <li><Link to="/my-bookings" className="hover:text-rose-400 transition">Digital Ticket Wallet</Link></li>
+              <li><Link to="/profile" className="hover:text-rose-400 transition">Loyalty & Rewards Hub</Link></li>
             </ul>
           </div>
 
           <div>
-            <h5 className="font-bold text-white text-xs uppercase tracking-wider mb-3">Enterprise Tech</h5>
+            <h5 className="font-bold text-white text-xs uppercase tracking-wider mb-3">Enterprise Stack</h5>
             <div className="space-y-1 text-[11px] text-slate-400">
-              <p>• Redis Distributed Seat Lock (SET NX EX)</p>
-              <p>• PostgreSQL Row-Level Locking (`FOR UPDATE`)</p>
-              <p>• Multi-user Real-Time WebSockets</p>
-              <p>• Idempotent Payment Confirmation</p>
+              <p>• Redis Lock Engine (`SET NX EX`)</p>
+              <p>• PostgreSQL Row-Level Locks (`FOR UPDATE`)</p>
+              <p>• Three.js WebGL Cinematic Background</p>
+              <p>• Real-Time Socket.IO Synchronization</p>
             </div>
           </div>
         </div>
 
-        {/* Bottom copyright */}
-        <div className="pt-8 border-t border-slate-800/60 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-slate-500">
-          <p>© 2026 BookMySeat Inc. All rights reserved. Crafted for cinema lovers.</p>
-          <div className="flex items-center gap-6">
-            <span>Privacy Policy</span>
-            <span>Terms of Service</span>
-            <span>Security Architecture</span>
+        {/* Bottom Copyright */}
+        <div className="pt-8 border-t border-white/[0.06] flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-slate-500">
+          <p>© 2026 BookMySeat Platform Inc. Crafted with cinema perfection.</p>
+          <div className="flex items-center gap-6 text-slate-400">
+            <span className="hover:text-white transition cursor-pointer">Privacy Policy</span>
+            <span className="hover:text-white transition cursor-pointer">Terms of Admission</span>
+            <span className="hover:text-white transition cursor-pointer">Security Audits</span>
           </div>
         </div>
       </div>

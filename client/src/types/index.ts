@@ -34,6 +34,7 @@ export interface Movie {
   is_now_showing: boolean;
   is_upcoming: boolean;
   category: 'movie' | 'event';
+  certificate?: string;
   availableDates?: string[];
   theatresCount?: number;
 }

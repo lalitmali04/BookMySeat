@@ -12,11 +12,9 @@ import {
   MapPin,
   Calendar,
   Clock,
-  Info,
   AlertCircle,
-  Sparkles,
-  Lock,
-  Armchair
+  Armchair,
+  CheckCircle2
 } from 'lucide-react';
 
 export const SeatSelectionPage: React.FC = () => {
@@ -71,14 +69,14 @@ export const SeatSelectionPage: React.FC = () => {
     if (!showId) return;
     fetchSeatMap();
 
-    // Socket.io real-time updates
+    // Socket.io real-time updates for concurrent seat reservations
     joinShowRoom(showId);
     const socket = getSocket();
 
     const handleSeatLocked = (data: { showId: string; seatId: string; userToken: string; ttl: number }) => {
       if (data.showId !== showId) return;
       const myToken = getUserLockToken();
-      if (data.userToken === myToken) return; // already handled locally
+      if (data.userToken === myToken) return;
 
       setCategories((prevCats) =>
         prevCats.map((cat) => ({
@@ -135,7 +133,7 @@ export const SeatSelectionPage: React.FC = () => {
     };
   }, [showId, fetchSeatMap]);
 
-  // Handle seat selection with atomic Redis locking
+  // Atomic Redis lock toggle
   const handleToggleSeat = async (seat: Seat) => {
     if (!showId) return;
     if (lockInProgress) return;
@@ -143,7 +141,6 @@ export const SeatSelectionPage: React.FC = () => {
     const isAlreadySelected = selectedSeats.some((s) => s.seatId === seat.seatId);
 
     if (isAlreadySelected) {
-      // Release lock
       setLockInProgress(true);
       try {
         await api.unlockSeats(showId, [seat.seatId]);
@@ -152,7 +149,6 @@ export const SeatSelectionPage: React.FC = () => {
         if (updated.length === 0) {
           setLockExpiresAt(null);
         }
-        // Update local seat status to AVAILABLE
         setCategories((prev) =>
           prev.map((cat) => ({
             ...cat,
@@ -170,13 +166,11 @@ export const SeatSelectionPage: React.FC = () => {
         setLockInProgress(false);
       }
     } else {
-      // Max 10 seats check
       if (selectedSeats.length >= 10) {
         showToast('Maximum 10 seats allowed per booking.', 'info');
         return;
       }
 
-      // Acquire Redis Temporary Soft Lock
       setLockInProgress(true);
       try {
         const lockRes = await api.lockSeats(showId, [seat.seatId]);
@@ -184,7 +178,6 @@ export const SeatSelectionPage: React.FC = () => {
         setSelectedSeats(updated);
         setLockExpiresAt(lockRes.expiresAt);
 
-        // Update local seat status
         setCategories((prev) =>
           prev.map((cat) => ({
             ...cat,
@@ -197,9 +190,7 @@ export const SeatSelectionPage: React.FC = () => {
           }))
         );
       } catch (err: any) {
-        // Race condition / lock conflict occurred
         showToast(err.message || 'Sorry, this seat was just selected by another user.', 'error');
-        // Refresh live map to sync latest status
         fetchSeatMap();
       } finally {
         setLockInProgress(false);
@@ -222,10 +213,10 @@ export const SeatSelectionPage: React.FC = () => {
 
   if (loading || !show) {
     return (
-      <div className="min-h-screen py-16 px-4 max-w-7xl mx-auto flex items-center justify-center">
+      <div className="min-h-screen py-24 px-4 max-w-7xl mx-auto flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-10 h-10 border-3 border-rose-500 border-t-transparent rounded-full animate-spin"></div>
-          <p className="text-xs font-semibold text-slate-400">Initializing Cinema Seating Matrix & Redis Lock Engine...</p>
+          <div className="w-10 h-10 border-3 border-rose-500 border-t-transparent rounded-full animate-spin" />
+          <p className="text-xs font-semibold text-slate-400">Loading auditorium layout and live locks...</p>
         </div>
       </div>
     );
@@ -233,7 +224,7 @@ export const SeatSelectionPage: React.FC = () => {
 
   return (
     <div className="min-h-screen pb-36 pt-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-      {/* Toast Notification */}
+      {/* Toast Notification Alert */}
       {toastMessage && (
         <div className="fixed top-24 right-6 z-50 animate-in slide-in-from-top-4 duration-200">
           <div className={`p-4 rounded-2xl shadow-2xl border flex items-center gap-3 text-xs font-bold ${
@@ -241,7 +232,7 @@ export const SeatSelectionPage: React.FC = () => {
               ? 'bg-rose-950/90 border-rose-500/50 text-rose-200'
               : toastMessage.type === 'success'
               ? 'bg-emerald-950/90 border-emerald-500/50 text-emerald-200'
-              : 'bg-slate-900/90 border-slate-700 text-slate-200'
+              : 'bg-[#0c111e]/95 border-white/10 text-slate-200'
           }`}>
             <AlertCircle className="w-4 h-4 shrink-0 text-rose-400" />
             <span>{toastMessage.text}</span>
@@ -249,22 +240,23 @@ export const SeatSelectionPage: React.FC = () => {
         </div>
       )}
 
-      {/* Header Bar */}
-      <div className="bg-slate-900/60 border border-slate-800 rounded-3xl p-5 mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-lg">
+      {/* Header Info Panel */}
+      <div className="studio-glass rounded-3xl p-5 mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-xl border border-white/[0.08]">
         <div className="flex items-center gap-4">
           <button
             onClick={() => navigate(show?.movie?.id ? `/movie/${show.movie.id}` : '/')}
-            className="p-2.5 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition cursor-pointer"
+            className="p-2.5 rounded-2xl bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 hover:text-white transition cursor-pointer border border-white/10"
+            aria-label="Back to movie details"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
           <div>
             <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight">
-              {show?.movie?.title || 'Movie Screening'}
+              {show?.movie?.title || 'Screening'}
             </h1>
             <div className="flex flex-wrap items-center gap-3 text-xs text-slate-400 mt-1">
-              <span className="font-semibold text-slate-300 flex items-center gap-1">
-                <MapPin className="w-3.5 h-3.5 text-rose-500" /> {show?.theatre?.name || 'Multiplex'} ({show?.screen?.name || 'Main Screen'})
+              <span className="font-semibold text-slate-300 flex items-center gap-1.5">
+                <MapPin className="w-3.5 h-3.5 text-rose-500" /> {show?.theatre?.name || 'Cinema'} ({show?.screen?.name || 'Screen 1'})
               </span>
               <span>•</span>
               <span className="flex items-center gap-1">
@@ -274,134 +266,108 @@ export const SeatSelectionPage: React.FC = () => {
               <span className="flex items-center gap-1">
                 <Clock className="w-3.5 h-3.5 text-slate-400" /> {show?.startTime}
               </span>
-              <span className="px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 font-extrabold text-[10px]">
+              <span className="px-2.5 py-0.5 rounded-full bg-rose-500/15 border border-rose-500/25 text-rose-300 font-extrabold text-[10px]">
                 {show?.format || 'IMAX 3D'}
               </span>
             </div>
           </div>
         </div>
 
-        {/* Legend */}
-        <div className="flex flex-wrap items-center gap-3 text-xs bg-slate-950 p-2.5 rounded-2xl border border-slate-800/80">
+        {/* Legend Bar */}
+        <div className="flex flex-wrap items-center gap-3.5 text-xs bg-[#060912]/80 px-4 py-2.5 rounded-full border border-white/[0.06]">
           <div className="flex items-center gap-1.5 text-slate-300">
-            <div className="w-4 h-4 rounded-lg bg-slate-900 border border-slate-700"></div>
+            <div className="w-3.5 h-3.5 rounded-md bg-white/[0.06] border border-white/15" />
             <span>Available</span>
           </div>
           <div className="flex items-center gap-1.5 text-rose-300 font-bold">
-            <div className="w-4 h-4 rounded-lg bg-rose-600 border border-rose-500 shadow-sm"></div>
+            <div className="w-3.5 h-3.5 rounded-md bg-rose-600 border border-rose-400 shadow-sm" />
             <span>Selected</span>
           </div>
-          <div className="flex items-center gap-1.5 text-amber-400">
-            <div className="w-4 h-4 rounded-lg bg-amber-500/20 border border-amber-500 animate-pulse"></div>
-            <span>Locked (Other User)</span>
+          <div className="flex items-center gap-1.5 text-amber-300">
+            <div className="w-3.5 h-3.5 rounded-md bg-amber-500/20 border border-amber-500 animate-pulse" />
+            <span>Locked</span>
           </div>
-          <div className="flex items-center gap-1.5 text-slate-400">
-            <div className="w-4 h-4 rounded-lg bg-slate-800/60 border border-slate-800"></div>
+          <div className="flex items-center gap-1.5 text-slate-500">
+            <div className="w-3.5 h-3.5 rounded-md bg-[#0a0e1a]/60 border border-white/[0.04]" />
             <span>Booked</span>
           </div>
         </div>
       </div>
 
-      {/* Cinema Seating Location & Venue Overview Section */}
+      {/* Auditorium Blueprint Layout */}
       <CinemaVenueLayout
-        theatreName={show?.theatre?.name || 'Multiplex Cinema'}
-        screenName={show?.screen?.name || 'Audi 1'}
-        format={show?.format || 'IMAX 3D'}
+        theatreName={show.theatre?.name || 'Multiplex'}
+        screenName={show.screen?.name || 'Screen 1'}
+        format={show.format || 'IMAX 3D'}
         selectedSeatsCount={selectedSeats.length}
       />
 
-      {/* Cinema Screen Curved Projection */}
-      <CinemaScreen format={show.format} />
+      {/* Seating Grid Container */}
+      <div className="studio-glass rounded-3xl p-6 sm:p-10 mb-8 border border-white/[0.08] shadow-2xl relative overflow-x-auto">
+        
+        {/* Cinema Screen Curve */}
+        <CinemaScreen format={show.format} />
 
-      {/* Interactive Seat Matrix */}
-      <div className="bg-slate-950 border border-slate-800/80 rounded-3xl p-6 sm:p-10 shadow-2xl overflow-x-auto my-8">
-        <div className="min-w-[640px] max-w-4xl mx-auto space-y-8">
-          {categories.map((cat) => {
-            const rowKeys = Object.keys(cat.rows).sort();
-            if (rowKeys.length === 0) return null;
-
-            return (
-              <div key={cat.category} className="space-y-3">
-                {/* Category Header with Price Pill */}
-                <div className="flex items-center justify-between pb-2 border-b border-slate-800/60">
-                  <span className="text-xs font-extrabold uppercase tracking-wider text-slate-400 flex items-center gap-2">
-                    <span className={`w-2 h-2 rounded-full ${
-                      cat.category === 'RECLINER' ? 'bg-amber-400' : cat.category === 'PRIME' ? 'bg-indigo-400' : 'bg-slate-400'
-                    }`}></span>
-                    {cat.category} SECTION
-                  </span>
-                  <span className="text-xs font-black text-rose-400 bg-rose-500/10 px-2.5 py-1 rounded-xl border border-rose-500/20">
-                    ₹{cat.price}
-                  </span>
-                </div>
-
-                {/* Rows Grid */}
-                <div className="space-y-2.5 pt-2">
-                  {rowKeys.map((rowKey) => {
-                    const rowSeats = cat.rows[rowKey];
-                    // Split seats with center aisle (e.g. 1..5 on Left, 6..10 on Right)
-                    const leftAisle = rowSeats.slice(0, Math.ceil(rowSeats.length / 2));
-                    const rightAisle = rowSeats.slice(Math.ceil(rowSeats.length / 2));
-
-                    return (
-                      <div key={rowKey} className="flex items-center justify-center gap-3 sm:gap-4">
-                        {/* Row Label Left */}
-                        <span className="w-5 text-center text-xs font-bold text-slate-400 select-none">
-                          {rowKey}
-                        </span>
-
-                        {/* Left Wing */}
-                        <div className="flex items-center gap-1.5 sm:gap-2">
-                          {leftAisle.map((seat) => (
-                            <SeatButton
-                              key={seat.seatId}
-                              seat={seat}
-                              isSelected={selectedSeats.some((s) => s.seatId === seat.seatId)}
-                              onToggle={handleToggleSeat}
-                              disabled={lockInProgress}
-                            />
-                          ))}
-                        </div>
-
-                        {/* Center Gangway / Aisle */}
-                        <div className="w-6 sm:w-10 text-center text-[10px] uppercase font-bold text-slate-400 select-none">
-                          AISLE
-                        </div>
-
-                        {/* Right Wing */}
-                        <div className="flex items-center gap-1.5 sm:gap-2">
-                          {rightAisle.map((seat) => (
-                            <SeatButton
-                              key={seat.seatId}
-                              seat={seat}
-                              isSelected={selectedSeats.some((s) => s.seatId === seat.seatId)}
-                              onToggle={handleToggleSeat}
-                              disabled={lockInProgress}
-                            />
-                          ))}
-                        </div>
-
-                        {/* Row Label Right */}
-                        <span className="w-5 text-center text-xs font-bold text-slate-400 select-none">
-                          {rowKey}
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
+        {/* Seating Rows grouped by Category */}
+        <div className="space-y-10 min-w-[580px] max-w-4xl mx-auto pt-6">
+          {categories.map((catGroup) => (
+            <div key={catGroup.category} className="space-y-3">
+              {/* Category Tier Divider */}
+              <div className="flex items-center justify-between border-b border-white/[0.06] pb-2 text-xs font-bold text-slate-400">
+                <span className="uppercase tracking-wider flex items-center gap-2">
+                  <Armchair className="w-4 h-4 text-rose-500" />
+                  {catGroup.category} TIER — ₹{catGroup.price}
+                </span>
+                <span className="text-[11px] text-slate-400 font-normal">
+                  {catGroup.category === 'RECLINER' ? 'Plush Recliners' : catGroup.category === 'PRIME' ? 'Prime Center' : 'Standard Seating'}
+                </span>
               </div>
-            );
-          })}
+
+              {/* Rows inside Category */}
+              <div className="space-y-2.5">
+                {Object.entries(catGroup.rows).map(([rowLetter, rowSeats]) => (
+                  <div key={rowLetter} className="flex items-center justify-center gap-3">
+                    {/* Left Row Indicator */}
+                    <span className="w-6 text-center text-xs font-extrabold text-slate-400 select-none">
+                      {rowLetter}
+                    </span>
+
+                    {/* Seats in Row */}
+                    <div className="flex items-center gap-2 sm:gap-2.5">
+                      {rowSeats.map((seat) => {
+                        const isSelected = selectedSeats.some((s) => s.seatId === seat.seatId);
+                        return (
+                          <SeatButton
+                            key={seat.seatId}
+                            seat={seat}
+                            isSelected={isSelected}
+                            onToggle={handleToggleSeat}
+                            disabled={lockInProgress}
+                          />
+                        );
+                      })}
+                    </div>
+
+                    {/* Right Row Indicator */}
+                    <span className="w-6 text-center text-xs font-extrabold text-slate-400 select-none">
+                      {rowLetter}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
-      {/* Sticky Bottom Booking Bar with Countdown */}
+      {/* Sticky Bottom Order Summary & Hold Bar */}
       <StickyBookingBar
-        showId={show.id}
+        showId={showId || ''}
         selectedSeats={selectedSeats}
         lockExpiresAt={lockExpiresAt}
         onLockExpired={handleLockExpired}
         onProceed={handleProceedToCheckout}
+        loading={lockInProgress}
       />
     </div>
   );

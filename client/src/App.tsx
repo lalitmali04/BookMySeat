@@ -6,6 +6,7 @@ import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { CityModal } from './components/CityModal';
 import { AuthModal } from './components/AuthModal';
+import { SpidermanScene } from './components/SpidermanScene';
 
 import { HomePage } from './pages/HomePage';
 import { MovieDetailsPage } from './pages/MovieDetailsPage';
@@ -34,10 +35,13 @@ export const App: React.FC = () => {
     <AuthProvider>
       <CityProvider>
         <Router>
-          <div className="flex flex-col min-h-screen bg-slate-950 text-slate-100 antialiased selection:bg-rose-600 selection:text-white">
+          <div className="relative flex flex-col min-h-screen bg-[#05070d] text-slate-100 antialiased selection:bg-rose-600 selection:text-white film-grain overflow-x-hidden">
+            {/* Global 3D Spider-Man WebGL Background Canvas */}
+            <SpidermanScene />
+
             <Navbar onOpenAuth={handleOpenAuth} />
             
-            <main className="flex-1">
+            <main className="flex-1 relative z-10">
               <Routes>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/movie/:id" element={<MovieDetailsPage />} />
