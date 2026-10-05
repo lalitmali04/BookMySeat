@@ -12,9 +12,9 @@ export const MovieCard: React.FC<MovieCardProps> = ({ movie, onWatchTrailer }) =
   const navigate = useNavigate();
 
   return (
-    <div className="group relative bg-[#0c111e]/80 border border-white/[0.08] hover:border-rose-500/50 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-[0_12px_30px_-5px_rgba(0,0,0,0.8),0_0_20px_-3px_rgba(225,29,72,0.25)] hover:-translate-y-1.5 flex flex-col">
+    <div className="group relative studio-glass-subtle hover:studio-glass rounded-2xl overflow-hidden transition-all duration-300 hover:border-rose-500/50 hover:shadow-[0_16px_36px_-6px_rgba(0,0,0,0.85),0_0_24px_-4px_rgba(225,29,72,0.3)] hover:-translate-y-2 flex flex-col backdrop-blur-md">
       {/* Poster Media with Hover Zoom */}
-      <div className="relative aspect-[2/3] w-full overflow-hidden bg-[#06080f]">
+      <div className="relative aspect-[2/3] w-full overflow-hidden bg-[#06080f]/60">
         <img
           src={movie.poster_url}
           alt={movie.title}
@@ -68,7 +68,7 @@ export const MovieCard: React.FC<MovieCardProps> = ({ movie, onWatchTrailer }) =
       </div>
 
       {/* Card Content & Details */}
-      <div className="p-4 flex-1 flex flex-col justify-between bg-gradient-to-b from-transparent to-[#070b14]">
+      <div className="p-4 flex-1 flex flex-col justify-between bg-gradient-to-b from-transparent to-[#070b14]/80">
         <div>
           {/* Language & Duration specs */}
           <div className="flex items-center justify-between text-[11px] text-slate-400 mb-1 font-medium">
@@ -105,3 +105,4 @@ export const MovieCard: React.FC<MovieCardProps> = ({ movie, onWatchTrailer }) =
     </div>
   );
 };
+
