@@ -57,11 +57,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const quickLoginDemoUser = async () => {
-    await login('user@bookmyseat.com', 'User@123');
+    const email = import.meta.env.VITE_DEMO_USER_EMAIL || 'user@bookmyseat.com';
+    const password = import.meta.env.VITE_DEMO_USER_PASSWORD || 'User@123';
+    await login(email, password);
   };
 
   const quickLoginAdmin = async () => {
-    await login('admin@bookmyseat.com', 'Admin@123');
+    const email = import.meta.env.VITE_DEMO_ADMIN_EMAIL || 'admin@bookmyseat.com';
+    const password = import.meta.env.VITE_DEMO_ADMIN_PASSWORD || 'Admin@123';
+    await login(email, password);
   };
 
   const logout = () => {

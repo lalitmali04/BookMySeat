@@ -151,6 +151,38 @@ npm run dev
 
 ---
 
+## 🚀 Production Deployment
+
+### Frontend (Vercel)
+The `client` directory can be deployed directly to Vercel as a Single Page Application (SPA).
+1. Connect your repository to Vercel and import the project.
+2. In the Vercel project settings, configure:
+   - **Root Directory**: `client`
+   - **Framework Preset**: Vite
+   - **Build Command**: `npm run build`
+   - **Output Directory**: `dist`
+   - **Install Command**: `npm install`
+3. Add the following **Environment Variables** in Vercel:
+   - `VITE_API_URL`: Your backend REST API URL (e.g., `https://your-backend-app.onrender.com/api`)
+   - `VITE_SOCKET_URL`: Your backend WebSocket URL (e.g., `https://your-backend-app.onrender.com`)
+
+*Note: A `vercel.json` file is already included in the `client/` directory to handle React Router SPA rewrites.*
+
+### Backend (Render / Railway / Heroku)
+The `server` directory must be deployed on a platform that supports persistent Node.js instances (e.g., Render, Railway) since it relies on long-running processes for WebSockets and Redis connections.
+1. Deploy the `server` directory as a Node.js web service.
+2. Ensure you have provisioned external PostgreSQL and Redis databases.
+3. Configure the following **Environment Variables**:
+   - `NODE_ENV`: `production`
+   - `PORT`: Server port (often assigned automatically by the host, e.g., `5000`)
+   - `DATABASE_URL`: Your production PostgreSQL connection string
+   - `REDIS_URL`: Your production Redis connection string
+   - `JWT_SECRET`: A strong, secure random string for JWT signing
+   - `SEAT_LOCK_TTL`: Expiration time for temporary seat holds (default: `300` seconds)
+   - `CLIENT_URL`: Your frontend Vercel domain (e.g., `https://your-vercel-domain.vercel.app`) - required for CORS
+
+---
+
 ## 🔑 Demo Login Credentials
 
 You can use the **1-Click Demo Switcher** in the Sign In modal or type manually:

@@ -26,8 +26,10 @@ export async function seedDatabase() {
   console.log('🌱 Seeding BookMySeat demo database...');
 
   // 1. Clean / Init tables if needed
-  const passwordHash = await bcrypt.hash('User@123', 10);
-  const adminPasswordHash = await bcrypt.hash('Admin@123', 10);
+  const demoUserPassword = process.env.DEMO_USER_PASSWORD || 'User@123';
+  const demoAdminPassword = process.env.DEMO_ADMIN_PASSWORD || 'Admin@123';
+  const passwordHash = await bcrypt.hash(demoUserPassword, 10);
+  const adminPasswordHash = await bcrypt.hash(demoAdminPassword, 10);
 
   // USERS
   const users = [

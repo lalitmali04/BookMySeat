@@ -21,7 +21,7 @@ initSocket(server);
 
 // Middleware
 app.use(cors({
-  origin: '*',
+  origin: config.corsOrigin,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'x-user-lock-token']
 }));
@@ -69,10 +69,18 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
 
 // Auto-seed and start listening
 async function startServer() {
-  await seedDatabase();
+  // Only auto-seed in development to prevent issues in production
+  if (config.nodeEnv === 'development') {
+    try {
+      await seedDatabase();
+      console.log('Database seeded successfully.');
+    } catch (error) {
+      console.error('Database seeding failed:', error);
+    }
+  }
 
-  server.listen(config.port, () => {
-    console.log(`🚀 BookMySeat Server running on http://localhost:${config.port}`);
+  server.listen(config.port, '0.0.0.0', () => {
+    console.log(`🚀 BookMySeat Server running on port ${config.port} in ${config.nodeEnv} mode`);
     console.log(`🔌 WebSocket server live for real-time seat locks.`);
   });
 }

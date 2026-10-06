@@ -7,7 +7,7 @@ import {
   User
 } from '../types';
 
-const API_BASE = '/api';
+const API_BASE = import.meta.env.VITE_API_URL || '/api';
 
 // Generate or get unique lock session token for current browser session
 export function getUserLockToken(): string {
