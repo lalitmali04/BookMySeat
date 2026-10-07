@@ -7,10 +7,11 @@ build/
 *.tsbuildinfo
 
 # Environment variables & secrets
-.env
+# src/config/env.ts
 .env.*
 !.env.example
 *.env
+**/env.ts
 
 # Logs
 logs/
